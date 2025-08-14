@@ -1,0 +1,123 @@
+##WORDPRESS
+****¿Qué archivo es obligatorio para que un plugin sea reconocido por WordPress? ¿Qué debe contener como mínimo?
+
+Debe existir al menos un archivo PHP con la cabecera estándar del plugin.
+<?php
+/**
+ * Plugin Name: Tienda Licores - Sistema de Promociones
+ * Plugin URI: https://tienda-licores.com
+ * Description: Sistema de descuentos y promociones para productos alcohólicos
+ * Version: 1.2.0
+ * Author: Aldair Gutierrez Desarrollador Web Meico S.A
+ * Text Domain: licores-promociones
+ * Domain Path: /languages
+ * Requires at least: 5.0
+ * Tested up to: 6.3
+ * WC requires at least: 5.0
+ * WC tested up to: 8.0
+ */
+
+
+
+**** En WordPress, ¿qué es el nonce y para qué se utiliza?
+
+En WordPress es un token de seguridad que se genera y valida para:
+
+Evitar ataques 
+
+Asegura que una acción fue iniciada por un usuario legítimo y no por un script externo malicioso.
+
+----¿ Para qué se utiliza?----
+Verificar la intención del usuario antes de ejecutar algo importante (borrar, actualizar, guardar datos, etc.).
+
+Ejemplo práctico
+Supongamos que tienes un formulario para borrar un producto en el admin:
+
+1️ Generar el nonce (cuando muestras el formulario o enlace)
+<?php wp_nonce_field('borrar_producto', 'mi_nonce'); ?>
+
+'borrar_producto' → acción que vamos a proteger.
+
+'mi_nonce' → nombre del campo oculto que contendrá el token.
+
+Esto generará un campo oculto <input type="hidden" ...> con el valor del nonce.
+
+2 Verificar el nonce (cuando procesas la petición)
+if ( ! isset($_POST['mi_nonce']) || 
+     ! wp_verify_nonce($_POST['mi_nonce'], 'borrar_producto') ) {
+    wp_die('Acción no permitida');
+}
+
+Si el nonce no es válido o no existe → bloquea la ejecución.
+No cifran datos, solo verifican la autenticidad de la petición.
+
+
+
+****Indica la diferencia entre init, plugins_loaded y wp_loaded en el ciclo de carga de WordPress.
+
+---plugins_loaded → Se ejecuta cuando todos los plugins han sido cargados, pero antes de inicializar nada más. Útil para asegurarte de que un plugin requerido esté activo antes de usarlo.
+
+---init → Se ejecuta cuando WordPress ya está listo para inicializar funciones, registrar custom post types, taxonomías, y cargar hooks principales. Es el más usado para inicializaciones generales.
+
+---wp_loaded → Se ejecuta al final de la carga de WordPress, justo antes de enviar contenido al navegador. Ideal para acciones que dependen de que todo (core, plugins, temas) esté completamente listo.
+
+##WOOCOMERCE
+**¿Qué acción usarías para ejecutar código justo después de que un pedido cambia a estado “completed”?
+
+a) woocommerce_order_status_completed
+
+b) woocommerce_checkout_order_processed
+
+c) wp_insert_post
+
+d) woocommerce_order_status_changed
+
+usuaria woocommerce_order_status_completed → Se dispara justo cuando un pedido cambia a estado “completed”
+
+****¿Cómo obtienes el precio de un producto usando el objeto $product en WooCommerce?
+
+$precio = $product->get_price();
+
+Esto devuelve el precio actual del producto (puede ser regular o rebajado según corresponda)
+
+$precio_regular = $product->get_regular_price(); // Precio normal sin descuento
+$precio_oferta  = $product->get_sale_price();    // Precio en oferta
+
+
+****Explica cómo añadir un campo personalizado en el checkout y guardarlo en los metadatos del pedido
+
+Mostrar campo en el checkout
+1. Usar el hook `woocommerce_checkout_fields` para añadir el campo.
+2. Definir el campo con sus propiedades (label, placeholder, required, etc.).
+
+Guardar el campo en los metadatos del pedido
+1. Usar el hook `woocommerce_checkout_update_order_meta` para guardar el valor del campo.
+2. Acceder al valor del campo a través de `$_POST` y usar `update_post_meta()` para guardarlo.
+
+****¿Cuál es la función para registrar un nuevo tipo de producto en WooCommerce?
+
+Para registrar un nuevo tipo de producto en WooCommerce, se utiliza la función `wc_register_product_type()`. 
+
+Ejemplo:
+```php
+wc_register_product_type('licor_premium', array(
+    'label' => 'Licor Premium',
+    'supports' => array('title', 'editor', 'thumbnail')
+));
+```
+
+***¿Cómo filtrarías el precio mostrado en la tienda para aplicar un descuento condicional?
+
+Carpeta: wp-content/plugins/Licores-Descuentos Condicionales
+
+****Ejercicio 1: Plugin básico
+Crea un plugin llamado "WooCommerce Order Logger"
+Carpeta: wp-content/plugins/WooCommerce-Order-Logger
+
+****Ejercicio 2: Campos en checkout
+
+Carpeta: wp-content/plugins/Licores-Campos-Checkout
+
+Ejercicio 3: Filtro de precios
+
+Carpeta: wp-content/plugins/Licores-descuento-ofertas

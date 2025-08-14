@@ -1,0 +1,278 @@
+/* Estilos CSS para el admin del plugin Bolsa de Descuentos */
+
+/* Dashboard widgets */
+.wbd-dashboard-widgets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.wbd-widget {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.wbd-widget h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1d2327;
+    font-size: 16px;
+    border-bottom: 1px solid #dcdcde;
+    padding-bottom: 10px;
+}
+
+.wbd-widget p {
+    margin: 8px 0;
+}
+
+.wbd-widget ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wbd-widget li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.wbd-widget li:last-child {
+    border-bottom: none;
+}
+
+/* Acciones rápidas */
+.wbd-quick-actions {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f6f7f7;
+    border-radius: 4px;
+}
+
+.wbd-quick-actions h3 {
+    margin-top: 0;
+    color: #1d2327;
+}
+
+.wbd-quick-actions .button {
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+/* Estados de elementos */
+.wbd-status-active {
+    color: #00a32a;
+    font-weight: 500;
+}
+
+.wbd-status-inactive {
+    color: #d63638;
+    font-weight: 500;
+}
+
+/* Formularios del admin */
+.wbd-form-section {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.wbd-form-section h3 {
+    margin-top: 0;
+    color: #1d2327;
+    border-bottom: 1px solid #dcdcde;
+    padding-bottom: 10px;
+}
+
+/* Tablas personalizadas */
+.wbd-table-responsive {
+    overflow-x: auto;
+}
+
+.wbd-table-actions {
+    white-space: nowrap;
+}
+
+.wbd-table-actions a {
+    margin-right: 8px;
+    text-decoration: none;
+}
+
+.wbd-table-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Filtros de reportes */
+.wbd-filtros-reporte {
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.wbd-filtros-reporte .form-table th {
+    width: 150px;
+    font-weight: 500;
+}
+
+.wbd-filtros-reporte input[type="date"],
+.wbd-filtros-reporte select {
+    min-width: 150px;
+}
+
+/* Metabox en productos */
+.wbd-metabox-content {
+    padding: 15px;
+}
+
+.wbd-metabox-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.wbd-metabox-content th,
+.wbd-metabox-content td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.wbd-metabox-content th {
+    background: #f1f1f1;
+    font-weight: 500;
+}
+
+/* Alertas y notificaciones */
+.wbd-notice {
+    margin: 15px 0;
+    padding: 10px 15px;
+    border-radius: 4px;
+    border-left: 4px solid #00a32a;
+    background: #f0f6fc;
+}
+
+.wbd-notice.error {
+    border-left-color: #d63638;
+    background: #fcf0f1;
+}
+
+.wbd-notice.warning {
+    border-left-color: #dba617;
+    background: #fcf9e8;
+}
+
+/* Estadísticas y métricas */
+.wbd-metric {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 5px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.wbd-metric-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1d2327;
+    display: block;
+}
+
+.wbd-metric-label {
+    font-size: 12px;
+    color: #646970;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive para admin */
+@media (max-width: 1024px) {
+    .wbd-dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .wbd-widget {
+        padding: 15px;
+    }
+    
+    .wbd-quick-actions {
+        padding: 15px;
+    }
+    
+    .wbd-quick-actions .button {
+        display: block;
+        margin: 5px 0;
+        text-align: center;
+    }
+    
+    .wbd-table-responsive {
+        font-size: 14px;
+    }
+    
+    .wbd-filtros-reporte .form-table th {
+        width: auto;
+        display: block;
+    }
+    
+    .wbd-filtros-reporte .form-table td {
+        display: block;
+        padding-left: 0;
+    }
+}
+
+/* Iconos específicos del admin */
+.wbd-menu-icon::before {
+    content: "💰";
+    font-size: 16px;
+}
+
+.wbd-icon-proveedor::before {
+    content: "🏢";
+    margin-right: 5px;
+}
+
+.wbd-icon-bolsa::before {
+    content: "🎯";
+    margin-right: 5px;
+}
+
+.wbd-icon-reporte::before {
+    content: "📊";
+    margin-right: 5px;
+}
+
+/* Loading states */
+.wbd-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.wbd-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #c3c4c7;
+    border-top-color: #007cba;
+    border-radius: 50%;
+    animation: wbd-spin 1s linear infinite;
+}
+
+@keyframes wbd-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
