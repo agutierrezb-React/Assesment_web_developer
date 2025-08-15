@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// 1️⃣ Mostrar el campo en el checkout
+// 1️⃣ hook Mostrar el campo en el checkout
 add_action('woocommerce_after_order_notes', 'wcd_agregar_campo_documento');
 function wcd_agregar_campo_documento($checkout) {
     woocommerce_form_field('numero_documento', array(

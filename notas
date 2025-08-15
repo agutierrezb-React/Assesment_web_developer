@@ -1,4 +1,16 @@
 ##WORDPRESS
+****Explica brevemente cómo funciona el hook system en WordPress (acciones y filtros) y
+da un ejemplo de cada uno.
+Respuesta #actions.php y #filters.php
+
+****¿Cuál es la diferencia entre un plugin mu-plugins y un plugin normal?
+
+Los mu-plugins (must-use plugins) son plugins que se cargan automáticamente en WordPress sin necesidad de ser activados. Se colocan en el directorio `wp-content/mu-plugins` y son ideales para funcionalidades críticas que deben estar siempre activas. Por otro lado, los plugins normales se encuentran en `wp-content/plugins` y deben ser activados manualmente desde el panel de administración.
+
+
+****
+
+
 ****¿Qué archivo es obligatorio para que un plugin sea reconocido por WordPress? ¿Qué debe contener como mínimo?
 
 Debe existir al menos un archivo PHP con la cabecera estándar del plugin.
@@ -33,19 +45,20 @@ Verificar la intención del usuario antes de ejecutar algo importante (borrar, a
 Ejemplo práctico
 Supongamos que tienes un formulario para borrar un producto en el admin:
 
-1️ Generar el nonce (cuando muestras el formulario o enlace)
-<?php wp_nonce_field('borrar_producto', 'mi_nonce'); ?>
+<?php
+public function process_proveedor_form() {
+    // Verificar permisos de usuario
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die(__('No tienes permisos para realizar esta acción.', 'wbd'));
+    }
 
-'borrar_producto' → acción que vamos a proteger.
+    // VERIFICACIÓN CRÍTICA DE NONCE - PROTEGE CONTRA ATAQUES CSRF
+    if (!isset($_POST[self::NONCE_FIELD]) || 
+        !wp_verify_nonce($_POST[self::NONCE_FIELD], self::NONCE_PROVEEDOR_ACTION)) {
+        wp_die(__('Token de seguridad inválido. Por favor, inténtalo de nuevo.', 'wbd'));
+    }
 
-'mi_nonce' → nombre del campo oculto que contendrá el token.
-
-Esto generará un campo oculto <input type="hidden" ...> con el valor del nonce.
-
-2 Verificar el nonce (cuando procesas la petición)
-if ( ! isset($_POST['mi_nonce']) || 
-     ! wp_verify_nonce($_POST['mi_nonce'], 'borrar_producto') ) {
-    wp_die('Acción no permitida');
+    // Continúa con el procesamiento seguro...
 }
 
 Si el nonce no es válido o no existe → bloquea la ejecución.
@@ -55,9 +68,11 @@ No cifran datos, solo verifican la autenticidad de la petición.
 
 ****Indica la diferencia entre init, plugins_loaded y wp_loaded en el ciclo de carga de WordPress.
 
+---init → Se ejecuta cuando WordPress ya está listo para inicializar funciones, cargar hooks principales, entre otros. Es el más usado para inicializaciones generales.
+
 ---plugins_loaded → Se ejecuta cuando todos los plugins han sido cargados, pero antes de inicializar nada más. Útil para asegurarte de que un plugin requerido esté activo antes de usarlo.
 
----init → Se ejecuta cuando WordPress ya está listo para inicializar funciones, registrar custom post types, taxonomías, y cargar hooks principales. Es el más usado para inicializaciones generales.
+
 
 ---wp_loaded → Se ejecuta al final de la carga de WordPress, justo antes de enviar contenido al navegador. Ideal para acciones que dependen de que todo (core, plugins, temas) esté completamente listo.
 
@@ -86,38 +101,91 @@ $precio_oferta  = $product->get_sale_price();    // Precio en oferta
 
 ****Explica cómo añadir un campo personalizado en el checkout y guardarlo en los metadatos del pedido
 
-Mostrar campo en el checkout
-1. Usar el hook `woocommerce_checkout_fields` para añadir el campo.
-2. Definir el campo con sus propiedades (label, placeholder, required, etc.).
+Carpeta: wp-content/plugins/licores-checkout-personalizado
 
-Guardar el campo en los metadatos del pedido
-1. Usar el hook `woocommerce_checkout_update_order_meta` para guardar el valor del campo.
-2. Acceder al valor del campo a través de `$_POST` y usar `update_post_meta()` para guardarlo.
-
-****¿Cuál es la función para registrar un nuevo tipo de producto en WooCommerce?
-
-Para registrar un nuevo tipo de producto en WooCommerce, se utiliza la función `wc_register_product_type()`. 
-
-Ejemplo:
-```php
-wc_register_product_type('licor_premium', array(
-    'label' => 'Licor Premium',
-    'supports' => array('title', 'editor', 'thumbnail')
-));
-```
 
 ***¿Cómo filtrarías el precio mostrado en la tienda para aplicar un descuento condicional?
 
 Carpeta: wp-content/plugins/Licores-Descuentos Condicionales
 
+
+
+EJERCICIOS-------->
 ****Ejercicio 1: Plugin básico
 Crea un plugin llamado "WooCommerce Order Logger"
 Carpeta: wp-content/plugins/WooCommerce-Order-Logger
 
 ****Ejercicio 2: Campos en checkout
 
-Carpeta: wp-content/plugins/Licores-Campos-Checkout
+Carpeta: wp-content/plugins/Licores-Descuentos-ofertas
 
 Ejercicio 3: Filtro de precios
 
 Carpeta: wp-content/plugins/Licores-descuento-ofertas
+
+Ejercicio 4 Shortcode
+
+Carpeta: wp-content/plugins/Licores-Shortcodes
+
+Ejercicio 5 plugin bolsa de descuentos
+
+Carpeta: wp-content/plugins/plugin_ejercicio_final
+
+
+****¿Cómo evitarías que tu plugin afecte el rendimiento del sitio si necesita consultar muchos pedidos de WooCommerce?
+
+Para evitar que el plugin afecte el rendimiento del sitio al consultar muchos pedidos de WooCommerce, se pueden implementar las siguientes estrategias:
+
+1. Paginación y límites: Consultar los pedidos en lotes pequeños utilizando paginación para evitar cargar demasiados datos a la vez.
+
+2. Caché: Almacenar en caché los resultados de consultas frecuentes para reducir la carga en la base de datos.
+
+3. Consultas optimizadas: Utilizar consultas específicas y eficientes, evitando cargar datos innecesarios.
+
+4. Hooks adecuados: Ejecutar las consultas solo cuando sea necesario, utilizando hooks que se disparen en momentos específicos.
+
+5. Transients API: Usar la API de transients de WordPress para almacenar datos temporales y evitar consultas repetitivas.
+
+
+****¿Qué medidas tomarías para asegurar que tu plugin sea seguro contra inyecciones SQL?
+
+1. Usar consultas preparadas: Siempre que sea posible, utilizar consultas preparadas en lugar de concatenar directamente los valores en las consultas SQL. Esto ayuda a prevenir inyecciones SQL al separar los datos de la lógica de la consulta.
+
+2. Validar y sanitizar entradas: Validar y sanitizar todas las entradas del usuario antes de usarlas en consultas SQL. Esto incluye datos de formularios, parámetros de URL y cualquier otra entrada externa.
+
+3. Escapar datos: Si se deben incluir datos dinámicos en las consultas SQL, asegurarse de escapar adecuadamente esos datos utilizando funciones como `esc_sql()` de WordPress.
+
+4. Limitar privilegios: Asegurarse de que la base de datos y las tablas tengan los privilegios mínimos necesarios. Esto significa que el usuario de la base de datos utilizado por el plugin no debe tener permisos innecesarios.
+
+5. Revisar y auditar el código: Realizar revisiones de código y auditorías de seguridad regularmente para identificar y corregir posibles vulnerabilidades.
+
+6. Mantenerse actualizado: Mantener el plugin y todas las dependencias actualizadas para protegerse contra vulnerabilidades conocidas.
+
+****¿Qué diferencia hay entre usar $wpdb y WC_Order_Query para obtener pedidos?
+
+Sirven para:
+
+$wpdb → Ejecutar consultas SQL directas en cualquier tabla de la BD (no solo pedidos).
+
+WC_Order_Query → Obtener pedidos usando la API oficial de WooCommerce.
+
+Diferencias clave:
+
+$wpdb = acceso directo, rápido, sin lógica de WooCommerce.
+
+WC_Order_Query = más seguro, respeta filtros y la estructura de WooCommerce.
+
+
+****Explica por qué es importante internacionalizar (i18n) y localizar (l10n) un plugin.
+
+a internacionalización (i18n) y localización (l10n) son fundamentales para hacer que un plugin sea accesible globalmente, permitiendo que usuarios de diferentes idiomas y culturas puedan utilizarlo en su lengua nativa.
+
+asi tal como lo implementé en el plugin del ejercicio 5
+ Definí el Text Domain: woo-bolsa-descuentos en la cabecera del plugin, configuré el Domain Path: /languages para las traducciones, e implementé el método load_textdomain() que carga las traducciones usando load_plugin_textdomain(). A lo largo de todo el código del plugin utilicé funciones como __(), esc_html__() y esc_attr__() para marcar todos los textos como traducibles
+
+
+ ****¿Cómo controlarías la compatibilidad de tu plugin con futuras versiones de WooCommerce?
+
+ Declarar compatibilidad explícita en la cabecera del plugin con WC requires at least y WC tested up to, usar hooks y funciones oficiales de WooCommerce en lugar de acceso directo a la base de datos, implementar verificaciones de versión con WC_VERSION antes de usar funcionalidades específicas, realizar testing automático en entornos staging con nuevas versiones beta, y mantener el plugin actualizado constantemente siguiendo las mejores prácticas y deprecation notices de WooCommerce.
+
+ En el plugin Bolsa de Descuentos ya apliqué esto declarando WC requires at least: 5.0 y WC tested up to: 8.0 en la cabecera, usando exclusivamente la API oficial de WooCommerce como wc_get_product(), WC()->cart, y hooks oficiales como woocommerce_before_calculate_totals, evitando acceso directo a tablas de WooCommerce y implementando verificaciones de existencia de clases con class_exists('WooCommerce') antes de ejecutar cualquier funcionalidad del plugin.

@@ -49,11 +49,14 @@ function lsp_shortcode_total_pedidos($atts) {
         text-align: center;
     ">';
     
-    $html .= '<h3 style="color: #28a745; margin-top: 0;">🍷 Resumen de Compras</h3>';
-    $html .= '<p><strong>Cliente:</strong> ' . esc_html($nombre_usuario) . '</p>';
+   // Crear el HTML de respuesta con contenedor único
+$html = '<div class="shortcode-total-pedidos wpedidos-container" style="all: unset; display: block; background: #f8f9fa; border: 2px solid #28a745; border-radius: 8px; padding: 20px; margin: 15px 0; text-align: center; font-family: Arial, sans-serif;">';
+
+$html .= '<h3 style="color: #28a745; margin-top: 0;"> Resumen de Compras</h3>';
+$html .= '<p><strong>Cliente:</strong> ' . esc_html($nombre_usuario) . '</p>';
     
     if ($total_pedidos > 0) {
-        $html .= '<p style="font-size: 24px; color: #28a745; font-weight: bold;">📦 ' . $total_pedidos . ' pedido(s) completado(s)</p>';
+        $html .= '<p style="font-size: 24px; color: #28a745; font-weight: bold;"> ' . $total_pedidos . ' pedido(s) completado(s)</p>';
         
         // Mensaje personalizado según cantidad de pedidos
         if ($total_pedidos == 1) {

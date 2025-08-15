@@ -31,7 +31,7 @@
     font-style: italic;
 }
 
-/* Información de descuentos en carrito */
+/* Información de descuentos en carrito - tabla */
 .wbd-descuentos-info th {
     background: #f7f7f7;
     font-weight: bold;
@@ -47,6 +47,92 @@
 .wbd-descuento-detalle td:first-child {
     color: #007cba;
     font-weight: 500;
+}
+
+/* Información de descuentos aplicados después del carrito */
+.wbd-descuentos-aplicados-info {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wbd-descuentos-aplicados-info h3 {
+    color: #28a745;
+    margin: 0 0 15px 0;
+    font-size: 20px;
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 5px;
+}
+
+.wbd-descuentos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.wbd-descuento-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wbd-descuento-proveedor {
+    margin-bottom: 8px;
+}
+
+.wbd-descuento-proveedor strong {
+    color: #007cba;
+    font-size: 16px;
+}
+
+.wbd-descuento-detalles {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.wbd-descuento-porcentaje {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.wbd-descuento-monto {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.wbd-saldo-restante-info {
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+}
+
+.wbd-saldo-texto {
+    color: #495057;
+    font-size: 14px;
+}
+
+.wbd-saldo-agotado {
+    color: #dc3545;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wbd-descuento-detalles {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .wbd-descuentos-aplicados-info {
+        padding: 15px;
+    }
 }
 
 .wbd-descuento-detalle td:last-child {

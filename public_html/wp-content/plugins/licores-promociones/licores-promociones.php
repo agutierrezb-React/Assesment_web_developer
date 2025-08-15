@@ -4,7 +4,7 @@
  * Plugin URI: https://tienda-licores.com
  * Description: Sistema de descuentos y promociones para productos alcohólicos
  * Version: 1.2.0
- * Author: Tu Nombre
+ * Author: Aldair Gutierrez
  * Text Domain: licores-promociones
  * Domain Path: /languages
  * Requires at least: 5.0

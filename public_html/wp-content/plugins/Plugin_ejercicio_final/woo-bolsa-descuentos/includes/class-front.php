@@ -58,8 +58,13 @@ class WBD_Front {
         // Hook principal para aplicar descuentos en carrito
         add_action('woocommerce_before_calculate_totals', array($this, 'aplicar_descuentos_carrito'), 20);
         
-        // Mostrar información de descuentos en carrito
+        // Mostrar información de descuentos en carrito (múltiples hooks para asegurar visualización)
         add_action('woocommerce_cart_totals_after_order_total', array($this, 'mostrar_info_descuentos_carrito'));
+        add_action('woocommerce_review_order_after_order_total', array($this, 'mostrar_info_descuentos_carrito'));
+        add_action('woocommerce_after_cart_table', array($this, 'mostrar_info_descuentos_carrito_tabla'));
+        
+        // Limpiar sesión cuando se vacía el carrito
+        add_action('woocommerce_cart_emptied', array($this, 'limpiar_descuentos_sesion'));
         
         // Procesar descuentos al completar pedido
         add_action('woocommerce_order_status_completed', array($this, 'procesar_descuentos_pedido_completado'));
@@ -93,6 +98,11 @@ class WBD_Front {
         // Procesar cada item del carrito
         foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
             $this->procesar_item_carrito($cart_item_key, $cart_item);
+        }
+        
+        // Guardar descuentos en sesión para mantenerlos disponibles
+        if (!empty($this->descuentos_aplicados)) {
+            WC()->session->set('wbd_descuentos_aplicados', $this->descuentos_aplicados);
         }
         
         wbd_log('Descuentos aplicados en carrito: ' . count($this->descuentos_aplicados));
@@ -167,6 +177,11 @@ class WBD_Front {
      * Mostrar información de descuentos en carrito
      */
     public function mostrar_info_descuentos_carrito() {
+        // Recuperar descuentos de sesión si no están en la instancia
+        if (empty($this->descuentos_aplicados) && WC()->session) {
+            $this->descuentos_aplicados = WC()->session->get('wbd_descuentos_aplicados', array());
+        }
+        
         if (empty($this->descuentos_aplicados)) {
             return;
         }
@@ -195,6 +210,55 @@ class WBD_Front {
             echo '<td></td>';
             echo '</tr>';
         }
+    }
+    
+    /**
+     * Mostrar información de descuentos después de tabla del carrito
+     */
+    public function mostrar_info_descuentos_carrito_tabla() {
+        // Recuperar descuentos de sesión si no están en la instancia
+        if (empty($this->descuentos_aplicados) && WC()->session) {
+            $this->descuentos_aplicados = WC()->session->get('wbd_descuentos_aplicados', array());
+        }
+        
+        if (empty($this->descuentos_aplicados)) {
+            return;
+        }
+        
+        echo '<div class="wbd-descuentos-aplicados-info">';
+        echo '<h3>' . __('Descuentos Aplicados', 'woo-bolsa-descuentos') . '</h3>';
+        echo '<div class="wbd-descuentos-lista">';
+        
+        foreach ($this->descuentos_aplicados as $descuento) {
+            $saldo_restante = $descuento['saldo_bolsa_original'] - $descuento['monto_descuento'];
+            
+            echo '<div class="wbd-descuento-item">';
+            echo '<div class="wbd-descuento-proveedor">';
+            echo '<strong>' . $descuento['proveedor_nombre'] . '</strong>';
+            echo '</div>';
+            
+            echo '<div class="wbd-descuento-detalles">';
+            echo '<span class="wbd-descuento-porcentaje">';
+            echo sprintf(__('Descuento aplicado: %s%%', 'woo-bolsa-descuentos'), $descuento['porcentaje_descuento']);
+            echo '</span>';
+            echo '<span class="wbd-descuento-monto">';
+            echo sprintf(__('Ahorro: %s', 'woo-bolsa-descuentos'), wbd_format_currency($descuento['monto_descuento']));
+            echo '</span>';
+            echo '</div>';
+            
+            echo '<div class="wbd-saldo-restante-info">';
+            echo '<span class="wbd-saldo-texto">';
+            echo sprintf(__('Saldo restante en bolsa: %s', 'woo-bolsa-descuentos'), wbd_format_currency($saldo_restante));
+            echo '</span>';
+            if ($saldo_restante <= 0) {
+                echo '<span class="wbd-saldo-agotado">' . __('(Bolsa agotada)', 'woo-bolsa-descuentos') . '</span>';
+            }
+            echo '</div>';
+            echo '</div>';
+        }
+        
+        echo '</div>';
+        echo '</div>';
     }
     
     /**
@@ -376,5 +440,16 @@ class WBD_Front {
                 WBD_VERSION
             );
         }
+    }
+    
+    /**
+     * Limpiar descuentos de la sesión cuando se vacía el carrito
+     */
+    public function limpiar_descuentos_sesion() {
+        if (WC()->session) {
+            WC()->session->__unset('wbd_descuentos_aplicados');
+        }
+        $this->descuentos_aplicados = array();
+        wbd_log('Descuentos limpiados de sesión - carrito vaciado');
     }
 }
