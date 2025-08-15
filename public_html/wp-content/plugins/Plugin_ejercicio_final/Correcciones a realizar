@@ -1,0 +1,7 @@
+Revisar por que dejó de registrar proveedore.
+
+revisar por que el plugin woo-chekout-documento no se ve en la table 'wxy_postmeta' el valor del numero de documento.
+
+Revisar por que al modificarle por BD la tabla `wxy_bolsas_descuento` para dejar sin cupos y proba el ejercicio  (Si ninguna bolsa del producto tiene fondos suficientes, no se aplica descuento).. a reversarle por intervención manual cupo suficiente , dejó de funcionar esa parte del plugin?
+
+
